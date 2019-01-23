@@ -2,7 +2,9 @@ package com.stackroute.controller;
 
         import com.stackroute.domain.Muzix;
         import com.stackroute.exceptions.MuzixAlreadyExistsException;
+        import com.stackroute.exceptions.MuzixTrackNotFoundException;
         import com.stackroute.service.MuzixService;
+        import io.swagger.annotations.Api;
         import org.springframework.beans.factory.annotation.Autowired;
         import org.springframework.http.HttpStatus;
         import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ package com.stackroute.controller;
 
 @RestController
 @RequestMapping(value = "api/v1")
+@Api(value="onlinestore", description="Operations pertaining to products in Online Store")
 public class MuzixController {
 
     //variable of type for interface
@@ -74,12 +77,18 @@ public class MuzixController {
         try {
             muzixService.removeMuzix(trackId);
             responseEntity = new ResponseEntity<String>("Successfully Deleted", HttpStatus.CREATED);
-        } catch (Exception e) {
+        } catch (MuzixTrackNotFoundException e) {
             responseEntity = new ResponseEntity<String>(e.getMessage(), HttpStatus.CONFLICT);
 
         }
         return responseEntity;
+    }
+
+    //gettrackName method
+    @GetMapping("muzix1/{trackName}")
+    public ResponseEntity<?> gettrackName(@PathVariable String trackName) {
+        return new ResponseEntity<List<Muzix>>(muzixService.trackByName(trackName),HttpStatus.OK);
+    }
 
     }
-}
 
